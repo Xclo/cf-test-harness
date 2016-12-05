@@ -12,7 +12,7 @@ Create a set of test apps, targeting specific buildpacks, services in PCF and te
 - Python
 - Ruby
 - Go
-- Spring with My-SQL
+- Spring with my-SQL
 - Spring with Redis
 - Spring with RabbitMQ
 - Spring with SSO
@@ -26,4 +26,4 @@ Add your test app to this repository and update the Concourse Pipeline. The Conc
 For e.g.
 - Java App - able to deploy the java app and run the app using the buildpack specified in the Manifest /cftest/status -> Up/Down
 - Java App - able to deploy the java app and scale up and down the app /cftest/scale
-My SQL CRUD - /cftest/crud
+- mySQL CRUD - /cftest/crud
