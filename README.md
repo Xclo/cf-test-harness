@@ -24,6 +24,6 @@ Create a set of test apps, targeting specific buildpacks, services in PCF and te
 Add your test app to this repository and update the Concourse Pipeline. The Concourse pipeline can be targeted to a specific PCF Deployment and it will report back for each of the app if the test passed or failed using a uniform rest endpoint /cftest/{test-type}
 
 For e.g.
-Java App - able to deploy the java app and run the app using the buildpack specified in the Manifest /cftest/status -> Up/Down
-Java App - able to deploy the java app and scale up and down the app /cftest/scale
+- Java App - able to deploy the java app and run the app using the buildpack specified in the Manifest /cftest/status -> Up/Down
+- Java App - able to deploy the java app and scale up and down the app /cftest/scale
 My SQL CRUD - /cftest/crud
