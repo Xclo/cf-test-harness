@@ -11,3 +11,9 @@ config.yml
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+target/
+java/target/
+java/target/gs-spring-boot-0.1.0.jar.original
+java/target/maven-archiver/pom.properties
+java/target/surefire-reports/hello.HelloControllerTest.txt
+java/target/surefire-reports/TEST-hello.HelloControllerTest.xml
