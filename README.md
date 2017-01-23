@@ -1,5 +1,5 @@
 # pcf-test-harness
-Test Harness for PCF Platform for App Developers
+Test Harness for PCF Platform for App Developers using Concourse
 
 ## Objective
 Create a set of test apps, targeting specific buildpacks, services in PCF and test the platform's availability for app Developers
