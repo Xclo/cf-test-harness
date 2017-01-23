@@ -12,7 +12,7 @@ params:
   MAVEN_CONFIG:
 
 inputs:
-  - name: pcf-test-harness/java
+  - name: pcf-test-harness
 
 run:
   path: pcf-test-harness/java/ci/tasks/unit.sh

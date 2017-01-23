@@ -8,7 +8,7 @@ image_resource:
     tag: '8'
 
 inputs:
-  - name: pcf-test-harness/java
+  - name: pcf-test-harness
 
 run:
   path: pcf-test-harness/java/ci/tasks/integration.sh

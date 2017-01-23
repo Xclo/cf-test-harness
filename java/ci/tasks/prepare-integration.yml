@@ -11,7 +11,7 @@ params:
   CF_MANIFEST_HOST:
 
 inputs:
-  - name: pcf-test-harness/java
+  - name: pcf-test-harness
   - name: candidate-release
   - name: version
 
