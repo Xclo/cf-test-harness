@@ -1,0 +1,21 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: java
+    tag: '8'
+
+params:
+  MAVEN_OPTS:
+  MAVEN_CONFIG:
+
+inputs:
+  - name: pcf-test-harness/java
+
+run:
+  path: pcf-test-harness/java/ci/tasks/unit.sh
+  args: [
+    --input-dir, pcf-test-harness/java
+  ]
