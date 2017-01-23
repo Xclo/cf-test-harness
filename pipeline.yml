@@ -1,6 +1,6 @@
 ---
 resources:
-  - name: pcfdemo
+  - name: pcf-test-harness
     type: git
     source:
       uri: {{github-uri}}
@@ -20,7 +20,7 @@ resources:
     type: s3
     source:
       bucket: {{s3-bucket-release-candidates}}
-      regexp: pcf-demo-(.*).war
+      regexp: pcf-test-java-(.*).war
       access_key_id: {{s3-access-key-id}}
       secret_access_key: {{s3-secret-access-key}}
       endpoint: {{s3-endpoint}}
@@ -29,7 +29,7 @@ resources:
     type: s3
     source:
       bucket: {{s3-bucket-releases}}
-      regexp: pcf-demo-(.*).war
+      regexp: pcf-test-java-(.*).war
       access_key_id: {{s3-access-key-id}}
       secret_access_key: {{s3-secret-access-key}}
       endpoint: {{s3-endpoint}}
@@ -45,13 +45,13 @@ resources:
       skip_cert_check: true
 
 jobs:
-  - name: unit-test
+  - name: java-unit-test
     public: true
     plan:
-      - get: pcfdemo
+      - get: pcf-test-harness
         trigger: true
       - task: unit
-        file: pcfdemo/ci/tasks/unit.yml
+        file: pcf-test-harness/java/ci/tasks/unit.yml
         params: &MAVENPARAMS
           MAVEN_OPTS: {{maven-opts}}
           MAVEN_CONFIG: {{maven-config}}
@@ -59,17 +59,17 @@ jobs:
   - name: build-artifact
     serial_groups: [ version ]
     plan:
-      - get: pcfdemo
-        passed: [ unit-test ]
+      - get: pcf-test-harness
+        passed: [ java-unit-test ]
         trigger: true
       - get: version
         params: { pre: rc }
       - task: build
-        file: pcfdemo/ci/tasks/build.yml
+        file: pcf-test-harness/java/ci/tasks/build.yml
         params:
           <<: *MAVENPARAMS
       - put: candidate-release
-        params: { file: build/pcf-demo-*.war }
+        params: { file: build/pcf-test-java-*.war }
       - put: version
         params: { file: version/number }
 
@@ -79,19 +79,19 @@ jobs:
       - get: candidate-release
         trigger: true
         passed: [ build-artifact ]
-      - get: pcfdemo
+      - get: pcf-test-harness
         passed: [ build-artifact ]
       - get: version
         passed: [ build-artifact ]
       - task: prepare-integration
-        file: pcfdemo/ci/tasks/prepare-integration.yml
+        file: pcf-test-harness/java/ci/tasks/prepare-integration.yml
         params:
           CF_MANIFEST_HOST: {{cf-manifest-host}}
       - put: cf
         params:
           manifest: prepare-integration/manifest.yml
       - task: integration
-        file: pcfdemo/ci/tasks/integration.yml
+        file: pcf-test-harness/java/ci/tasks/integration.yml
         params:
           <<: *MAVENPARAMS
 
@@ -100,14 +100,14 @@ jobs:
     plan:
       - get: candidate-release
         passed: [ integration-test ]
-      - get: pcfdemo
+      - get: pcf-test-harness
         passed: [ integration-test ]
       - get: version
         params: { bump: final }
       - task: prepare-final
-        file: pcfdemo/ci/tasks/prepare-final.yml
+        file: pcf-test-harness/java/ci/tasks/prepare-final.yml
       - put: final-release
-        params: { file: prepare-final/pcf-demo-*.war }
+        params: { file: prepare-final/pcf-test-java-*.war }
       - put: version
         params: { file: version/number }
 
