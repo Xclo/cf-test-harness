@@ -1,6 +1,7 @@
 #!/bin/bash
 
-baseName="pcf-demo"
+baseName="gs-spring-boot"
+
 
 inputDir=     # required
 outputDir=    # required
@@ -43,8 +44,8 @@ if [ -f "$versionFile" ]; then
   baseName="${baseName}-${version}"
 fi
 
-inputWar=`find $inputDir -name '*.war'`
-outputWar="${outputDir}/${baseName}.war"
+inputWar=`find $inputDir -name '*.jar'`
+outputWar="${outputDir}/${baseName}.jar"
 
 echo "Renaming ${inputWar} to ${outputWar}"
 

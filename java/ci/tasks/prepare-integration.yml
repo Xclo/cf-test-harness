@@ -25,6 +25,6 @@ run:
     --output-dir, prepare-integration,
     --version-file, version/number,
     --input-manifest, pcf-test-harness/java/manifest.yml,
-    --artifactId, pcf-demo,
-    --packaging, war
+    --artifactId, gs-spring-boot,
+    --packaging, jar
   ]

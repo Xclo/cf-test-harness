@@ -74,7 +74,7 @@ jobs:
         params:
           <<: *MAVENPARAMS
       - put: candidate-release
-        params: { file: build/pcf-test-java-*.war }
+        params: { file: build/*.jar }
       - put: version
         params: { file: version/number }
 
@@ -112,7 +112,7 @@ jobs:
       - task: prepare-final
         file: pcf-test-harness/java/ci/tasks/prepare-final.yml
       - put: final-release
-        params: { file: prepare-final/pcf-test-java-*.war }
+        params: { file: prepare-final/*.jar }
       - put: version
         params: { file: version/number }
 
