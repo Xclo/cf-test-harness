@@ -5,7 +5,7 @@ groups:
   - deploy-app
   - load-tests
   - promote-new-version
-
+  
 resources:
 - name: pcf-test-harness
   type: git
