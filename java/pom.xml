@@ -12,16 +12,18 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.3.RELEASE</version>
     </parent>
-
     <profiles>
-  		<profile>
-  			<id>ci</id>
-  			<properties>
-  				<versionNumber>${project.version}</versionNumber>
-  				<finalName>${project.artifactId}-${versionNumber}</finalName>
-  			</properties>
-  		</profile>
-  	</profiles>
+    	<profile>
+    		<id>ci</id>
+    		<activation>
+          <activeByDefault>true</activeByDefault>
+        </activation>
+    		<properties>
+    			<versionNumber>${project.version}</versionNumber>
+    			<finalName>${project.artifactId}-${versionNumber}</finalName>
+    		</properties>
+    	</profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -48,6 +50,7 @@
     </properties>
 
     <build>
+        <finalName>${finalName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
