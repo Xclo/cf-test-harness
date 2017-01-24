@@ -7,7 +7,7 @@ groups:
   - promote-new-version
 
 resources:
-- name: concourse-pipeline-samples
+- name: pcf-test-harness
   type: git
   source:
       uri: {{github-uri}}
@@ -28,7 +28,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - get: concourse-pipeline-samples
+  - get: pcf-test-harness
     trigger: true
   - task: run-unit-tests
     file: pcf-test-harness/nodejs/ci/tasks/unit-tests.yml
@@ -37,7 +37,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - get: concourse-pipeline-samples
+  - get: pcf-test-harness
     trigger: true
     passed:
       - unit-tests
@@ -63,7 +63,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - get: concourse-pipeline-samples
+  - get: pcf-test-harness
     trigger: true
     passed:
       - deploy-app
@@ -86,7 +86,7 @@ jobs:
   serial: true
   public: true
   plan:
-  - get: concourse-pipeline-samples
+  - get: pcf-test-harness
     trigger: true
     passed:
       - load-tests

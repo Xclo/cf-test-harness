@@ -8,7 +8,7 @@ image_resource:
     tag: "latest"
 
 inputs:
-- name: concourse-pipeline-samples
+- name: pcf-test-harness
 - name: current-app-info
 
 run:
