@@ -24,6 +24,6 @@ run:
     --input-dir, pcf-test-harness/java,
     --output-dir, build,
     --version-file, version/number,
-    --artifactId, pcf-demo,
-    --packaging, war
+    --artifactId, gs-spring-boot,
+    --packaging, jar
   ]
