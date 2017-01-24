@@ -5,8 +5,12 @@ groups:
   - deploy-app
   - load-tests
   - promote-new-version
-  
+
 resources:
+- name: every-5m
+  type: time
+  source: {interval: 5m}
+
 - name: pcf-test-harness
   type: git
   source:
@@ -28,6 +32,8 @@ jobs:
   serial: true
   public: true
   plan:
+  - get: every-5m
+    trigger: true
   - get: pcf-test-harness
     trigger: true
   - task: run-unit-tests
