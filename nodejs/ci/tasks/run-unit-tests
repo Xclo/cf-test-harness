@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -xe
+
+cd pcf-test-harness/nodejs/bgd-app
+npm install
+mocha tests --recursive
