@@ -1,5 +1,8 @@
 ---
 resources:
+  - name: every-5m
+    type: time
+    source: {interval: 5m}
   - name: pcf-test-harness
     type: git
     source:
@@ -48,6 +51,8 @@ jobs:
   - name: java-unit-test
     public: true
     plan:
+      - get: every-5m
+        trigger: true
       - get: pcf-test-harness
         trigger: true
       - task: unit
