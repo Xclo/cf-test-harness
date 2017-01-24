@@ -60,6 +60,7 @@ cd $inputDir
 ./mvnw clean package -Pci -DversionNumber=$version
 
 # Copy war file to concourse output folder
-cd ..
+cd ../..
 pwd
+echo $inputDir $outputDir
 cp $inputDir/target/$artifactName $outputDir/$artifactName
