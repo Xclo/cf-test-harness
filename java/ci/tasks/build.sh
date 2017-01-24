@@ -61,4 +61,5 @@ cd $inputDir
 
 # Copy war file to concourse output folder
 cd ..
+pwd
 cp $inputDir/target/$artifactName $outputDir/$artifactName
