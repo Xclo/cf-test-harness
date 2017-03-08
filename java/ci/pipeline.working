@@ -3,7 +3,7 @@ resources:
   - name: every-5m
     type: time
     source: {interval: 5m}
-  - name: cf-test-harness
+  - name: pcf-test-harness
     type: git
     source:
       uri: {{github-uri}}
@@ -12,11 +12,12 @@ resources:
   - name: version
     type: semver
     source:
-      driver: git
-      uri: {{github-uri}}
-      branch: version
-      file: version
-      private_key: {{git-repo-private-key}}
+      bucket: {{s3-bucket-version}}
+      initial_version: 1.0.0-rc.0
+      key: current-version
+      access_key_id: {{s3-access-key-id}}
+      secret_access_key: {{s3-secret-access-key}}
+      endpoint: {{s3-endpoint}}
 
   - name: candidate-release
     type: s3
@@ -52,10 +53,10 @@ jobs:
     plan:
       - get: every-5m
         trigger: true
-      - get: cf-test-harness
+      - get: pcf-test-harness
         trigger: true
       - task: unit
-        file: cf-test-harness/java/ci/tasks/unit.yml
+        file: pcf-test-harness/java/ci/tasks/unit.yml
         params: &MAVENPARAMS
           MAVEN_OPTS: {{maven-opts}}
           MAVEN_CONFIG: {{maven-config}}
@@ -63,13 +64,13 @@ jobs:
   - name: build-artifact
     serial_groups: [ version ]
     plan:
-      - get: cf-test-harness
+      - get: pcf-test-harness
         passed: [ java-unit-test ]
         trigger: true
       - get: version
         params: { pre: rc }
       - task: build
-        file: cf-test-harness/java/ci/tasks/build.yml
+        file: pcf-test-harness/java/ci/tasks/build.yml
         params:
           <<: *MAVENPARAMS
       - put: candidate-release
@@ -83,19 +84,19 @@ jobs:
       - get: candidate-release
         trigger: true
         passed: [ build-artifact ]
-      - get: cf-test-harness
+      - get: pcf-test-harness
         passed: [ build-artifact ]
       - get: version
         passed: [ build-artifact ]
       - task: prepare-integration
-        file: cf-test-harness/java/ci/tasks/prepare-integration.yml
+        file: pcf-test-harness/java/ci/tasks/prepare-integration.yml
         params:
           CF_MANIFEST_HOST: {{cf-manifest-host}}
       - put: cf
         params:
           manifest: prepare-integration/manifest.yml
       - task: integration
-        file: cf-test-harness/java/ci/tasks/integration.yml
+        file: pcf-test-harness/java/ci/tasks/integration.yml
         params:
           <<: *MAVENPARAMS
 
@@ -104,12 +105,12 @@ jobs:
     plan:
       - get: candidate-release
         passed: [ integration-test ]
-      - get: cf-test-harness
+      - get: pcf-test-harness
         passed: [ integration-test ]
       - get: version
         params: { bump: final }
       - task: prepare-final
-        file: cf-test-harness/java/ci/tasks/prepare-final.yml
+        file: pcf-test-harness/java/ci/tasks/prepare-final.yml
       - put: final-release
         params: { file: prepare-final/*.jar }
       - put: version

@@ -1,0 +1,102 @@
+groups:
+- name: main
+  jobs:
+  - unit-test
+  - build
+  - cf-test
+  - ship-it
+resources:
+  - name: every-5m
+    type: time
+    source: {interval: 5m}
+  - name: every-1h
+    type: time
+    source: {interval: 60m}
+  - name: source-code
+    type: git
+    source:
+      uri: {{github-uri}}
+      branch: {{github-branch}}
+  - name: cf
+    type: cf
+    source:
+      api: {{cf-api}}
+      username: {{cf-username}}
+      password: {{cf-password}}
+      organization: {{cf-org}}
+      space: {{cf-space}}
+      skip_cert_check: true
+  - name: version
+    type: semver
+    source:
+      driver: git
+      uri: {{github-uri}}
+      branch: version
+      file: version
+      private_key: {{git-repo-private-key}}
+jobs:
+  - name: unit-test
+    public: true
+    plan:
+      - get: every-5m
+        trigger: true
+      - get: source-code
+        trigger: true
+      - task: unit
+        file: cf-test-harness/java/ci/tasks/unit.yml
+  - name: build
+    serial_groups: [ version ]
+    plan:
+      - get: source-code
+        passed: [ unit-test ]
+        trigger: true
+      - get: version
+        params: { pre: rc }
+      - task: build
+        file: cf-test-harness/java/ci/tasks/build.yml
+      - task: prepare-integration
+        file: cf-test-harness/java/ci/tasks/prepare-integration.yml
+      - put: cf
+        params:
+          manifest: prepare-integration/manifest.yml
+      - put: version
+        params: { file: version/number }
+      - task: integration
+        file: cf-test-harness/java/ci/tasks/integration.yml
+  - name: cf-test
+    serial: true
+    plan:
+      - get: every-1h
+        trigger: true
+      - get: source-code
+        passed: [ build ]
+      - get: version
+        passed: [ build ]
+      - task: integration
+        file: cf-test-harness/java/ci/tasks/cf-test.yml
+  - name: ship-it
+    serial_groups: [ version ]
+    plan:
+      - get: version
+        passed: [ cf-test ]
+        params: { bump: final }
+      - put: version
+        params: { file: version/number }
+  - name: major
+    serial_groups: [ version ]
+    plan:
+      - put: version
+        params: { bump: major, pre: rc }
+  - name: minor
+    serial_groups: [ version ]
+    plan:
+      - put: version
+        params: { bump: minor, pre: rc }
+  - name: patch
+    serial_groups: [ version ]
+    plan:
+      - get: version
+        passed: [ ship-it ]
+        trigger: true
+      - put: version
+        params: { bump: patch, pre: rc }
