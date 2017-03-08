@@ -1,0 +1,9 @@
+github-uri: https://github.com/rjain-pivotal/pcf-test-harness.git
+github-branch: master
+cf-api:
+cf-username:
+cf-password:
+cf-org:
+cf-space:
+cf-app-suffix:
+cf-app-domain:
