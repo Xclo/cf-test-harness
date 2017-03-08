@@ -12,16 +12,16 @@ params:
   MAVEN_CONFIG:
 
 inputs:
-  - name: {{repo-name}}
+  - name: cf-test-harness
   - name: version
 
 outputs:
   - name: build
 
 run:
-  path: java/ci/tasks/build.sh
+  path: cf-test-harness/java/ci/tasks/build.sh
   args: [
-    --input-dir, {{repo-name}}/java,
+    --input-dir, cf-test-harness/java,
     --output-dir, build,
     --version-file, version/number,
     --artifactId, gs-spring-boot,
