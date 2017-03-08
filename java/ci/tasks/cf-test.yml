@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pivotalservices/docker-concourse-cf-tools
+    tag: "latest"
+
+inputs:
+- name: {{repo-name}}
+
+outputs:
+- name: cf-test
+
+run:
+  path: java/ci/tasks/cf-test.sh
