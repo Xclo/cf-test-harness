@@ -1,42 +1,22 @@
----
+groups:
+- name: main
+  jobs:
+  - unit-test
+  - build
+  - cf-test
+  - ship-it
 resources:
   - name: every-5m
     type: time
     source: {interval: 5m}
-  - name: pcf-test-harness
+  - name: every-1h
+    type: time
+    source: {interval: 60m}
+  - name: source-code
     type: git
     source:
       uri: {{github-uri}}
       branch: {{github-branch}}
-
-  - name: version
-    type: semver
-    source:
-      bucket: {{s3-bucket-version}}
-      initial_version: 1.0.0-rc.0
-      key: current-version
-      access_key_id: {{s3-access-key-id}}
-      secret_access_key: {{s3-secret-access-key}}
-      endpoint: {{s3-endpoint}}
-
-  - name: candidate-release
-    type: s3
-    source:
-      bucket: {{s3-bucket-release-candidates}}
-      regexp: gs-spring-boot-(.*).jar
-      access_key_id: {{s3-access-key-id}}
-      secret_access_key: {{s3-secret-access-key}}
-      endpoint: {{s3-endpoint}}
-
-  - name: final-release
-    type: s3
-    source:
-      bucket: {{s3-bucket-releases}}
-      regexp: gs-spring-boot-(.*).jar
-      access_key_id: {{s3-access-key-id}}
-      secret_access_key: {{s3-secret-access-key}}
-      endpoint: {{s3-endpoint}}
-
   - name: cf
     type: cf
     source:
@@ -46,88 +26,72 @@ resources:
       organization: {{cf-org}}
       space: {{cf-space}}
       skip_cert_check: true
-
+  - name: version
+    type: semver
+    source:
+      driver: git
+      uri: {{github-uri}}
+      branch: version
+      file: version
+      private_key: {{git-repo-private-key}}
 jobs:
-  - name: java-unit-test
+  - name: unit-test
     public: true
     plan:
       - get: every-5m
         trigger: true
-      - get: pcf-test-harness
+      - get: source-code
         trigger: true
       - task: unit
-        file: pcf-test-harness/java/ci/tasks/unit.yml
-        params: &MAVENPARAMS
-          MAVEN_OPTS: {{maven-opts}}
-          MAVEN_CONFIG: {{maven-config}}
-
-  - name: build-artifact
+        file: cf-test-harness/java/ci/tasks/unit.yml
+  - name: build
     serial_groups: [ version ]
     plan:
-      - get: pcf-test-harness
-        passed: [ java-unit-test ]
+      - get: source-code
+        passed: [ unit-test ]
         trigger: true
       - get: version
         params: { pre: rc }
       - task: build
-        file: pcf-test-harness/java/ci/tasks/build.yml
-        params:
-          <<: *MAVENPARAMS
-      - put: candidate-release
-        params: { file: build/*.jar }
-      - put: version
-        params: { file: version/number }
-
-  - name: integration-test
-    serial: true
-    plan:
-      - get: candidate-release
-        trigger: true
-        passed: [ build-artifact ]
-      - get: pcf-test-harness
-        passed: [ build-artifact ]
-      - get: version
-        passed: [ build-artifact ]
+        file: cf-test-harness/java/ci/tasks/build.yml
       - task: prepare-integration
-        file: pcf-test-harness/java/ci/tasks/prepare-integration.yml
-        params:
-          CF_MANIFEST_HOST: {{cf-manifest-host}}
+        file: cf-test-harness/java/ci/tasks/prepare-integration.yml
       - put: cf
         params:
           manifest: prepare-integration/manifest.yml
+      - put: version
+        params: { file: version/number }
       - task: integration
-        file: pcf-test-harness/java/ci/tasks/integration.yml
-        params:
-          <<: *MAVENPARAMS
-
+        file: cf-test-harness/java/ci/tasks/integration.yml
+  - name: cf-test
+    serial: true
+    plan:
+      - get: every-1h
+        trigger: true
+      - get: source-code
+        passed: [ build ]
+      - get: version
+        passed: [ build ]
+      - task: integration
+        file: cf-test-harness/java/ci/tasks/cf-test.yml
   - name: ship-it
     serial_groups: [ version ]
     plan:
-      - get: candidate-release
-        passed: [ integration-test ]
-      - get: pcf-test-harness
-        passed: [ integration-test ]
       - get: version
+        passed: [ cf-test ]
         params: { bump: final }
-      - task: prepare-final
-        file: pcf-test-harness/java/ci/tasks/prepare-final.yml
-      - put: final-release
-        params: { file: prepare-final/*.jar }
       - put: version
         params: { file: version/number }
-
   - name: major
     serial_groups: [ version ]
     plan:
       - put: version
         params: { bump: major, pre: rc }
-
   - name: minor
     serial_groups: [ version ]
     plan:
       - put: version
         params: { bump: minor, pre: rc }
-
   - name: patch
     serial_groups: [ version ]
     plan:

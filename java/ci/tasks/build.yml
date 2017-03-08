@@ -12,16 +12,16 @@ params:
   MAVEN_CONFIG:
 
 inputs:
-  - name: pcf-test-harness
+  - name: {{repo-name}}
   - name: version
 
 outputs:
   - name: build
 
 run:
-  path: pcf-test-harness/java/ci/tasks/build.sh
+  path: java/ci/tasks/build.sh
   args: [
-    --input-dir, pcf-test-harness/java,
+    --input-dir, {{repo-name}}/java,
     --output-dir, build,
     --version-file, version/number,
     --artifactId, gs-spring-boot,

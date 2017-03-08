@@ -11,7 +11,7 @@ params:
   CF_MANIFEST_HOST:
 
 inputs:
-  - name: pcf-test-harness
+  - name: {{repo-name}}
   - name: candidate-release
   - name: version
 
@@ -19,7 +19,7 @@ outputs:
   - name: prepare-integration
 
 run:
-  path: pcf-test-harness/java/ci/tasks/prepare-integration.sh
+  path: java/ci/tasks/prepare-integration.sh
   args: [
     --input-dir, candidate-release,
     --output-dir, prepare-integration,
