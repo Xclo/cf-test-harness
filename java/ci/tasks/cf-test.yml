@@ -8,7 +8,7 @@ image_resource:
     tag: "latest"
 
 inputs:
-- name: {{repo-name}}
+- name: cf-test-harness
 
 outputs:
 - name: cf-test
