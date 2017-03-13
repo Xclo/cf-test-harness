@@ -13,28 +13,10 @@ resources:
     type: semver
     source:
       driver: git
-      uri: {{github-uri}}
+      uri: {{gitssh-uri}}
       branch: version
       file: version
       private_key: {{git-repo-private-key}}
-
-  - name: candidate-release
-    type: s3
-    source:
-      bucket: {{s3-bucket-release-candidates}}
-      regexp: gs-spring-boot-(.*).jar
-      access_key_id: {{s3-access-key-id}}
-      secret_access_key: {{s3-secret-access-key}}
-      endpoint: {{s3-endpoint}}
-
-  - name: final-release
-    type: s3
-    source:
-      bucket: {{s3-bucket-releases}}
-      regexp: gs-spring-boot-(.*).jar
-      access_key_id: {{s3-access-key-id}}
-      secret_access_key: {{s3-secret-access-key}}
-      endpoint: {{s3-endpoint}}
 
   - name: cf
     type: cf
@@ -72,17 +54,12 @@ jobs:
         file: cf-test-harness/java/ci/tasks/build.yml
         params:
           <<: *MAVENPARAMS
-      - put: candidate-release
-        params: { file: build/*.jar }
       - put: version
         params: { file: version/number }
 
   - name: integration-test
     serial: true
     plan:
-      - get: candidate-release
-        trigger: true
-        passed: [ build-artifact ]
       - get: cf-test-harness
         passed: [ build-artifact ]
       - get: version
@@ -102,36 +79,7 @@ jobs:
   - name: ship-it
     serial_groups: [ version ]
     plan:
-      - get: candidate-release
-        passed: [ integration-test ]
-      - get: cf-test-harness
-        passed: [ integration-test ]
       - get: version
         params: { bump: final }
-      - task: prepare-final
-        file: cf-test-harness/java/ci/tasks/prepare-final.yml
-      - put: final-release
-        params: { file: prepare-final/*.jar }
       - put: version
         params: { file: version/number }
-
-  - name: major
-    serial_groups: [ version ]
-    plan:
-      - put: version
-        params: { bump: major, pre: rc }
-
-  - name: minor
-    serial_groups: [ version ]
-    plan:
-      - put: version
-        params: { bump: minor, pre: rc }
-
-  - name: patch
-    serial_groups: [ version ]
-    plan:
-      - get: version
-        passed: [ ship-it ]
-        trigger: true
-      - put: version
-        params: { bump: patch, pre: rc }
