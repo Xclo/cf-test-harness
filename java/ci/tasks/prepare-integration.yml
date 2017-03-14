@@ -20,7 +20,7 @@ outputs:
 run:
   path: cf-test-harness/java/ci/tasks/prepare-integration.sh
   args: [
-    --input-dir, build,
+    --input-dir, cf-test-harness/java/target,
     --output-dir, prepare-integration,
     --version-file, version/number,
     --input-manifest, pcf-test-harness/java/manifest.yml,
