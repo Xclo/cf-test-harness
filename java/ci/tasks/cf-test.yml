@@ -14,4 +14,4 @@ outputs:
 - name: cf-test
 
 run:
-  path: java/ci/tasks/cf-test.sh
+  path: cf-test-harness/java/ci/tasks/cf-test.sh

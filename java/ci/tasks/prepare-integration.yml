@@ -18,7 +18,7 @@ outputs:
   - name: prepare-integration
 
 run:
-  path: java/ci/tasks/prepare-integration.sh
+  path: cf-test-harness/java/ci/tasks/prepare-integration.sh
   args: [
     --input-dir, build,
     --output-dir, prepare-integration,
