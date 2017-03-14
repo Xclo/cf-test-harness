@@ -1,7 +1,7 @@
 ---
 applications:
-- name: gs-spring-boot
+- name: test-java-smolder
   memory: 512M
   instances: 1
-  host: gs-spring-boot
+  host: test-java-smolder
   path: ./target/gs-spring-boot.jar

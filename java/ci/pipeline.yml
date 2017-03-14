@@ -29,7 +29,7 @@ resources:
       skip_cert_check: true
 
 jobs:
-  - name: java-unit-test
+  - name: unit-test
     public: true
     plan:
       - get: every-5m
@@ -42,11 +42,11 @@ jobs:
           MAVEN_OPTS: {{maven-opts}}
           MAVEN_CONFIG: {{maven-config}}
 
-  - name: build-artifact
+  - name: build-it
     serial_groups: [ version ]
     plan:
       - get: cf-test-harness
-        passed: [ java-unit-test ]
+        passed: [ unit-test ]
         trigger: true
       - get: version
         params: { pre: rc }
@@ -56,29 +56,38 @@ jobs:
           <<: *MAVENPARAMS
       - put: version
         params: { file: version/number }
-
-  - name: integration-test
-    serial: true
-    plan:
-      - get: cf-test-harness
-        passed: [ build-artifact ]
-      - get: version
-        passed: [ build-artifact ]
       - task: prepare-integration
         file: cf-test-harness/java/ci/tasks/prepare-integration.yml
         params:
-          CF_MANIFEST_HOST: {{cf-manifest-host}}
+          candidate-release: cf-test-harness/java/target/gs-spring-boot-0.1.0.jar
       - put: cf
         params:
-          manifest: prepare-integration/manifest.yml
-      - task: integration
-        file: cf-test-harness/java/ci/tasks/integration.yml
-        params:
-          <<: *MAVENPARAMS
+          manifest: cf-test-harness/java/manifest.yml
+          current_app_name: test-java-{{cf-app-suffix}}
 
+  - name: test-it
+    serial_groups: [ version ]
+    plan:
+      - get: cf-test-harness
+        passed: [ build-it ]
+        trigger: true
+      - task: cf-test
+        file: cf-test-harness/java/ci/tasks/cf-test.yml
+        params:
+          cf-app-suffix: {{cf-app-suffix}}
+          cf-api: {{cf-api}}
+          cf-username: {{cf-username}}
+          cf-password: {{cf-password}}
+          cf-org: {{cf-org}}
+          cf-space: {{cf-space}}
+          cf-test-url-endpoint: {{cf-health-endpoint}}
+          skip_cert_check: true
   - name: ship-it
     serial_groups: [ version ]
     plan:
+      - get: cf-test-harness
+        passed: [ test-it ]
+        trigger: true
       - get: version
         params: { bump: final }
       - put: version
