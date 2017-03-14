@@ -54,16 +54,17 @@ jobs:
         file: cf-test-harness/java/ci/tasks/build.yml
         params:
           <<: *MAVENPARAMS
-      - put: version
-        params: { file: version/number }
-      - task: prepare-integration
-        file: cf-test-harness/java/ci/tasks/prepare-integration.yml
-        params:
-          candidate-release: cf-test-harness/java/target/gs-spring-boot-0.1.0.jar
       - put: cf
         params:
           manifest: cf-test-harness/java/manifest.yml
           current_app_name: test-java-{{cf-app-suffix}}
+      # - put: version
+      #   params: { file: version/number }
+      # - task: prepare-integration
+      #   file: cf-test-harness/java/ci/tasks/prepare-integration.yml
+      #   params:
+      #     candidate-release: cf-test-harness/java/target/gs-spring-boot-0.1.0.jar
+
 
   - name: test-it
     serial_groups: [ version ]

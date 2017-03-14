@@ -4,4 +4,4 @@ applications:
   memory: 512M
   instances: 1
   host: test-java-smolder
-  path: ./target/gs-spring-boot.jar
+  path: ./build/gs-spring-boot-*.jar
