@@ -23,7 +23,7 @@ run:
     --input-dir, cf-test-harness/java/target,
     --output-dir, prepare-integration,
     --version-file, version/number,
-    --input-manifest, pcf-test-harness/java/manifest.yml,
+    --input-manifest, cf-test-harness/java/manifest.yml,
     --artifactId, gs-spring-boot,
     --packaging, jar
   ]
