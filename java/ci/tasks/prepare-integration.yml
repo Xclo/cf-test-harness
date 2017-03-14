@@ -21,7 +21,7 @@ outputs:
 run:
   path: java/ci/tasks/prepare-integration.sh
   args: [
-    --input-dir, candidate-release,
+    --input-dir, build,
     --output-dir, prepare-integration,
     --version-file, version/number,
     --input-manifest, pcf-test-harness/java/manifest.yml,
