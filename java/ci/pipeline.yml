@@ -76,13 +76,13 @@ jobs:
       - task: cf-test
         file: cf-test-harness/java/ci/tasks/cf-test.yml
         params:
-          cf-app-suffix: {{cf-app-suffix}}
-          cf-api: {{cf-api}}
-          cf-username: {{cf-username}}
-          cf-password: {{cf-password}}
-          cf-org: {{cf-org}}
-          cf-space: {{cf-space}}
-          cf-test-url-endpoint: {{cf-health-endpoint}}
+          cf_app_suffix: {{cf-app-suffix}}
+          cf_api: {{cf-api}}
+          cf_username: {{cf-username}}
+          cf_password: {{cf-password}}
+          cf_org: {{cf-org}}
+          cf_space: {{cf-space}}
+          cf_test_url_endpoint: {{cf-health-endpoint}}
           skip_cert_check: true
   - name: ship-it
     serial_groups: [ version ]
