@@ -77,7 +77,6 @@ jobs:
         file: cf-test-harness/java/ci/tasks/cf-test.yml
         params:
           cf_app: canary-java
-          cf_app_suffix: {{cf-app-suffix}}
           cf_api: {{cf-api}}
           cf_username: {{cf-username}}
           cf_password: {{cf-password}}
