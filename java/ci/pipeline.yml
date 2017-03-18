@@ -57,7 +57,7 @@ jobs:
       - put: cf
         params:
           manifest: cf-test-harness/java/manifest.yml
-          current_app_name: test-java
+          current_app_name: canary-java
           path: build/gs-spring-boot-*.jar
       # - put: version
       #   params: { file: version/number }
@@ -76,7 +76,7 @@ jobs:
       - task: cf-test
         file: cf-test-harness/java/ci/tasks/cf-test.yml
         params:
-          cf_app: test-java
+          cf_app: canary-java
           cf_app_suffix: {{cf-app-suffix}}
           cf_api: {{cf-api}}
           cf_username: {{cf-username}}

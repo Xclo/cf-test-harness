@@ -1,7 +1,7 @@
 ---
 applications:
-- name: test-java-smolder
+- name: canary-java
   memory: 512M
   instances: 1
-  host: test-java-smolder
+  host: canary-java
   #path: /tmp/build/put/build/gs-spring-boot-*.jar
