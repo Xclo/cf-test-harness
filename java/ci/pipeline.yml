@@ -9,6 +9,15 @@ resources:
       uri: {{github-uri}}
       branch: {{github-branch}}
 
+  - name: every-1h
+    type: time
+    source: {interval: 1h}
+  - name: cf-test-harness
+    type: git
+    source:
+      uri: {{github-uri}}
+      branch: {{github-branch}}
+
   - name: version
     type: semver
     source:
@@ -32,7 +41,7 @@ jobs:
   - name: unit-test
     public: true
     plan:
-      - get: every-5m
+      - get: every-1h
         trigger: true
       - get: cf-test-harness
         trigger: true
@@ -82,8 +91,29 @@ jobs:
           cf_password: {{cf-password}}
           cf_org: {{cf-org}}
           cf_space: {{cf-space}}
-          cf_test_url_endpoint: {{cf-health-endpoint}}
+          cf_test_url_endpoint: {{cf-test-endpoint}}
           skip_cert_check: true
+
+  - name: check-health
+    serial_groups: [ version ]
+    plan:
+      - get: every-5m
+        trigger: true
+      - get: cf-test-harness
+        passed: [ test-it ]
+        trigger: true
+      - task: cf-health
+        file: cf-test-harness/java/ci/tasks/cf-health.yml
+        params:
+          cf_app: canary-java
+          cf_api: {{cf-api}}
+          cf_username: {{cf-username}}
+          cf_password: {{cf-password}}
+          cf_org: {{cf-org}}
+          cf_space: {{cf-space}}
+          cf_health_url_endpoint: {{cf-health-endpoint}}
+          skip_cert_check: true
+
   - name: ship-it
     serial_groups: [ version ]
     plan:

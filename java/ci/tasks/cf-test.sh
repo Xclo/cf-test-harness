@@ -18,4 +18,4 @@ echo "Running cf tests..."
 
 echo $TEST_URL
 
-curl -k https://$TEST_URL/health
+curl -k https://$TEST_URL/test

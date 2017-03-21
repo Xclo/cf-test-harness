@@ -4,4 +4,4 @@ applications:
   memory: 512M
   instances: 1
   host: canary-java
-  #path: /tmp/build/put/build/gs-spring-boot-*.jar
+  path: target/gs-spring-boot-0.1.0.jar
