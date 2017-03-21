@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pivotalservices/docker-concourse-cf-tools
+    tag: "latest"
+
+inputs:
+- name: cf-test-harness
+
+outputs:
+- name: cf-test
+
+run:
+  path: cf-test-harness/java/ci/tasks/cf-health.sh
