@@ -1,0 +1,9 @@
+---
+applications:
+- name: canary-redis
+  memory: 1G
+  path: build/libs/canary-redis.jar
+  hostname: canary-redis
+services:
+  [c-redis]
+

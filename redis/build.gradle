@@ -1,0 +1,64 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.2.RELEASE'
+		springCloudConnectorsVersion = '1.2.3.RELEASE'
+		springRedisVersion = '1.1.0.RELEASE'
+		junitVersion = '4.8.1'
+		canaryRedisVersion= '1.0.0.BUILD-SNAPSHOT'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+version = '${canaryRedisVersion}'
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-cloud-connectors')
+	compile('org.springframework.boot:spring-boot-starter-data-redis')
+	compile "org.springframework.boot:spring-boot-starter-web"
+
+
+	// Spring Cloud Connectors
+	compile "org.springframework.cloud:spring-cloud-core:${springCloudConnectorsVersion}"
+	compile "org.springframework.cloud:spring-cloud-spring-service-connector:${springCloudConnectorsVersion}"
+	compile "org.springframework.cloud:spring-cloud-cloudfoundry-connector:${springCloudConnectorsVersion}"
+
+
+	// Redis Persistence
+	compile "redis.clients:jedis"
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR6"
+	}
+}
+
+
+jar {
+    baseName = "canary-redis"
+    version = "" // omit the version
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14'
+}
