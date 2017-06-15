@@ -13,7 +13,7 @@ cf apps
 
 cf routes
 
-export CF_DOMAIN_NAME=$CF_APP_DOMAIN
+export CF_DOMAIN_NAME=$CF_DOMAIN_NAME
 export MAIN_ROUTE_HOSTNAME=canary-node
 
 export NEXT_APP_COLOR=$(cat ./current-app-info/next-app.txt)

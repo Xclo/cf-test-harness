@@ -82,7 +82,7 @@ jobs:
   - task: run-load-tests
     file: cf-test-harness/nodejs/ci/tasks/load-tests.yml
     params:
-      CF_APP_DOMAIN: {{cf-app-domain}}
+      CF_DOMAIN_NAME: {{cf-domain-name}}
 
 - name: promote-new-version
   serial: true
@@ -108,4 +108,4 @@ jobs:
       CF_USER: {{cf-username}}
       CF_PWD: {{cf-password}}
       CF_SPACE: {{cf-space}}
-      CF_DOMAIN_NAME: {{cf-app-domain}}
+      CF_DOMAIN_NAME: {{cf-domain-name}}
