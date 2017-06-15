@@ -25,6 +25,8 @@ app.get('/images/*', function(req, res) {   // serve image files
   res.end(img, 'binary');
 });
 
+app.use('/health', require('express-healthcheck')());
+
 app.all('*', function(req, res) {   // serve all other requests
   var vcap_app=process.env.VCAP_APPLICATION || '{ "application_name":"","application_version":"","application_uris":""}';
   var app_obj = JSON.parse(vcap_app)
