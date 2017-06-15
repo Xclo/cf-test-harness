@@ -8,7 +8,7 @@ image_resource:
     tag: "latest"
 
 inputs:
-- name: pcf-test-harness
+- name: cf-test-harness
 
 run:
-  path: pcf-test-harness/nodejs/ci/tasks/run-unit-tests
+  path: cf-test-harness/nodejs/ci/tasks/run-unit-tests

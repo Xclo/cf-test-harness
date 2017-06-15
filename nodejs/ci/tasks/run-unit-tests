@@ -2,6 +2,6 @@
 
 set -xe
 
-cd pcf-test-harness/nodejs/bgd-app
+cd cf-test-harness/nodejs/bgd-app
 npm install
 mocha tests --recursive

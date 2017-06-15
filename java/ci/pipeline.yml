@@ -12,11 +12,7 @@ resources:
   - name: every-1h
     type: time
     source: {interval: 1h}
-  - name: cf-test-harness
-    type: git
-    source:
-      uri: {{github-uri}}
-      branch: {{github-branch}}
+
 
   - name: version
     type: semver

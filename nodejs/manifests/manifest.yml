@@ -1,6 +1,6 @@
 ---
 applications:
-- name: APPNAME
+- name: canary-node
   command: node index.js
   buildpack: https://github.com/cloudfoundry/buildpack-nodejs.git
   instances: 1

@@ -1,5 +1,6 @@
 pipeline.bak
 java/target/
+java/target/gs-spring-boot-0.1.0.jar.original
 gs-spring-boot-0.1.0.jar.original
 .DS_Store
 *.class

@@ -11,21 +11,22 @@ resources:
   type: time
   source: {interval: 5m}
 
-- name: pcf-test-harness
+- name: cf-test-harness
   type: git
   source:
       uri: {{github-uri}}
       branch: {{github-branch}}
 
-- name: PWS
+
+- name: cf
   type: cf
   source:
-    api: {{pws-api}}
-    organization: {{pws-organization}}
-    username: {{deploy-username}}
-    password: {{deploy-password}}
+    api: {{cf-api}}
+    username: {{cf-username}}
+    password: {{cf-password}}
+    organization: {{cf-org}}
+    space: {{cf-space}}
     skip_cert_check: true
-    space: {{pws-space}}
 
 jobs:
 - name: unit-tests
@@ -34,84 +35,76 @@ jobs:
   plan:
   - get: every-5m
     trigger: true
-  - get: pcf-test-harness
+  - get: cf-test-harness
     trigger: true
   - task: run-unit-tests
-    file: pcf-test-harness/nodejs/ci/tasks/unit-tests.yml
+    file: cf-test-harness/nodejs/ci/tasks/unit-tests.yml
 
 - name: deploy-app
   serial: true
   public: true
   plan:
-  - get: pcf-test-harness
+  - get: cf-test-harness
     trigger: true
     passed:
       - unit-tests
   - task: get-current-app-color
-    file: pcf-test-harness/nodejs/ci/tasks/current-app-get-info.yml
+    file: cf-test-harness/nodejs/ci/tasks/current-app-get-info.yml
     params:
-      PWS_APP_SUFFIX: {{pws-app-suffix}}
-      PWS_API: {{pws-api}}
-      PWS_ORG: {{pws-organization}}
-      PWS_USER: {{deploy-username}}
-      PWS_PWD: {{deploy-password}}
-      PWS_SPACE: {{pws-space}}
+      CF_API: {{cf-api}}
+      CF_ORG: {{cf-org}}
+      CF_USER: {{cf-username}}
+      CF_PWD: {{cf-password}}
+      CF_SPACE: {{cf-space}}
   - task: prepare-app-manifest
-    file: pcf-test-harness/nodejs/ci/tasks/app-manifest-prep.yml
-    params:
-      PWS_APP_SUFFIX: {{pws-app-suffix}}
-  - put: PWS
+    file: cf-test-harness/nodejs/ci/tasks/app-manifest-prep.yml
+  - put: cf
     params:
       manifest: app-manifest-output/manifest.yml
-      path: pcf-test-harness/nodejs/bgd-app
+      path: cf-test-harness/nodejs/bgd-app
 
 - name: load-tests
   serial: true
   public: true
   plan:
-  - get: pcf-test-harness
+  - get: cf-test-harness
     trigger: true
     passed:
       - deploy-app
   - task: get-current-app-color
-    file: pcf-test-harness/nodejs/ci/tasks/current-app-get-info.yml
+    file: cf-test-harness/nodejs/ci/tasks/current-app-get-info.yml
     params:
-      PWS_APP_SUFFIX: {{pws-app-suffix}}
-      PWS_API: {{pws-api}}
-      PWS_ORG: {{pws-organization}}
-      PWS_USER: {{deploy-username}}
-      PWS_PWD: {{deploy-password}}
-      PWS_SPACE: {{pws-space}}
+      CF_API: {{cf-api}}
+      CF_ORG: {{cf-org}}
+      CF_USER: {{cf-username}}
+      CF_PWD: {{cf-password}}
+      CF_SPACE: {{cf-space}}
   - task: run-load-tests
-    file: pcf-test-harness/nodejs/ci/tasks/load-tests.yml
+    file: cf-test-harness/nodejs/ci/tasks/load-tests.yml
     params:
-      PWS_APP_SUFFIX: {{pws-app-suffix}}
-      PWS_APP_DOMAIN: {{pws-app-domain}}
+      CF_APP_DOMAIN: {{cf-app-domain}}
 
 - name: promote-new-version
   serial: true
   public: true
   plan:
-  - get: pcf-test-harness
+  - get: cf-test-harness
     trigger: true
     passed:
       - load-tests
   - task: get-current-app-color
-    file: pcf-test-harness/nodejs/ci/tasks/current-app-get-info.yml
+    file: cf-test-harness/nodejs/ci/tasks/current-app-get-info.yml
     params:
-      PWS_APP_SUFFIX: {{pws-app-suffix}}
-      PWS_API: {{pws-api}}
-      PWS_ORG: {{pws-organization}}
-      PWS_USER: {{deploy-username}}
-      PWS_PWD: {{deploy-password}}
-      PWS_SPACE: {{pws-space}}
+      CF_API: {{cf-api}}
+      CF_ORG: {{cf-org}}
+      CF_USER: {{cf-username}}
+      CF_PWD: {{cf-password}}
+      CF_SPACE: {{cf-space}}
   - task: switch-app-routes
-    file: pcf-test-harness/nodejs/ci/tasks/update-routes.yml
+    file: cf-test-harness/nodejs/ci/tasks/update-routes.yml
     params:
-      PWS_APP_SUFFIX: {{pws-app-suffix}}
-      PWS_APP_DOMAIN: {{pws-app-domain}}
-      PWS_API: {{pws-api}}
-      PWS_ORG: {{pws-organization}}
-      PWS_USER: {{deploy-username}}
-      PWS_PWD: {{deploy-password}}
-      PWS_SPACE: {{pws-space}}
+      CF_API: {{cf-api}}
+      CF_ORG: {{cf-org}}
+      CF_USER: {{cf-username}}
+      CF_PWD: {{cf-password}}
+      CF_SPACE: {{cf-space}}

@@ -8,10 +8,10 @@ image_resource:
     tag: "latest"
 
 inputs:
-- name: cf-test-harness
+- name: pcf-test-harness
 
 outputs:
 - name: current-app-info
 
 run:
-  path: cf-test-harness/nodejs/ci/tasks/current-app-get-info
+  path: pcf-test-harness/nodejs/ci/tasks/current-app-get-info
