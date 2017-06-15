@@ -17,10 +17,10 @@ export CF_DOMAIN_NAME=$CF_APP_DOMAIN
 export MAIN_ROUTE_HOSTNAME=canary-node
 
 export NEXT_APP_COLOR=$(cat ./current-app-info/next-app.txt)
-export NEXT_APP_HOSTNAME=$NEXT_APP_COLOR-$CF_APP_SUFFIX
+export NEXT_APP_HOSTNAME=$NEXT_APP_COLOR-canary-node
 
 export CURRENT_APP_COLOR=$(cat ./current-app-info/current-app.txt)
-export CURRENT_APP_HOSTNAME=$CURRENT_APP_COLOR-$CF_APP_SUFFIX
+export CURRENT_APP_HOSTNAME=$CURRENT_APP_COLOR-canary-node
 
 echo "Mapping main app route to point to $NEXT_APP_HOSTNAME instance"
 cf map-route $NEXT_APP_HOSTNAME $CF_DOMAIN_NAME --hostname $MAIN_ROUTE_HOSTNAME
