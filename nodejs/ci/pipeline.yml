@@ -108,3 +108,4 @@ jobs:
       CF_USER: {{cf-username}}
       CF_PWD: {{cf-password}}
       CF_SPACE: {{cf-space}}
+      CF_DOMAIN_NAME: {{cf-app-domain}}
