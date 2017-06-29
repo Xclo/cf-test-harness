@@ -27,6 +27,23 @@ app.get('/images/*', function(req, res) {   // serve image files
 
 app.use('/health', require('express-healthcheck')());
 
+var getRepoInfo = require('git-repo-info');
+
+app.use('/info', function(req,res) {
+
+  var info = getRepoInfo();
+
+  res.writeHead(200, {"Content-Type": "text/html; charset=UTF-8"});
+  res.write("<html><body style='font-family: Arial'><img align='left' src='./images/Blue-Green-icon.png'>");
+  res.write("<h1><br><br><br>&nbsp;&nbsp;Version Info</h1><hr>");
+  res.write("<hr>");
+  res.write("<hr><p><b>Git Info:</b> "+ JSON.stringify(info,null,'\t')+"</p>");
+  res.write("<hr><p>Current time: "+new Date().toString()+"</p><hr/>");
+  res.write("</body></html>");
+  res.end("\n");
+
+});
+
 app.all('*', function(req, res) {   // serve all other requests
   var vcap_app=process.env.VCAP_APPLICATION || '{ "application_name":"","application_version":"","application_uris":""}';
   var app_obj = JSON.parse(vcap_app)

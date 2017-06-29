@@ -1,3 +1,5 @@
+node_modules/
+package-lock.json
 pipeline.bak
 java/target/
 java/target/gs-spring-boot-0.1.0.jar.original
